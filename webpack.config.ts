@@ -4,7 +4,7 @@ import HtmlWebpackPlugin from "html-webpack-plugin";
 const CURRENT_WORKING_DIR = process.cwd();
 console.log(CURRENT_WORKING_DIR);
 const config = {
-  entry: path.join(CURRENT_WORKING_DIR, "/src/index.ts"),
+  entry: path.join(CURRENT_WORKING_DIR, "/src/index.tsx"),
   mode: "development",
   output: {
     path: path.join(CURRENT_WORKING_DIR, "/dist/"),
@@ -13,6 +13,7 @@ const config = {
   devServer: {
     static: {
       directory: path.join(CURRENT_WORKING_DIR, "/dist/"),
+      //publicPath: "/",
     },
     hot: true,
   },
@@ -25,7 +26,15 @@ const config = {
       },
     ],
   },
-  plugins: [new HtmlWebpackPlugin()],
+  plugins: [
+    new HtmlWebpackPlugin({
+      inject: false,
+      template: path.join(CURRENT_WORKING_DIR, "/dist/index.html"),
+    }),
+  ],
+  resolve: {
+    extensions: [".tsx", ".ts", ".js"],
+  },
 };
 
 //export in js
