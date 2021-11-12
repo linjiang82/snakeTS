@@ -1,0 +1,39 @@
+body {
+  background-color:#888;
+  div{
+    .gameFrame{
+      margin:0 auto;
+      background-color:#b7d4a8;
+      width:360px;
+      height:480px;
+      border: 10px solid #000;
+      border-radius:5px;
+      .snakeFrame{
+        position: relative;
+        margin:28px auto;
+        width:304px;
+        height:304px;
+        border:1px solid #000;
+        border-radius:0;
+        .snake{
+          position: absolute;
+          width:10px;
+          height:10px;
+          background-color:#000;
+        }
+        .fruit{
+          position: absolute;
+          width:10px;
+          height:10px;
+          background-color:#888;
+
+        }
+      }
+      .infoBorad{
+        background-color:#666;
+        color: red;
+        margin:28px;
+      }
+    }
+  }
+}

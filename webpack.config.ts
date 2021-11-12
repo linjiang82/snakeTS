@@ -3,6 +3,9 @@ import HtmlWebpackPlugin from "html-webpack-plugin";
 
 const CURRENT_WORKING_DIR = process.cwd();
 console.log(CURRENT_WORKING_DIR);
+const babelOptions = {
+  presets: ["@babel/preset-react", "@babel/preset-env"],
+};
 const config = {
   entry: path.join(CURRENT_WORKING_DIR, "/src/index.tsx"),
   mode: "development",
@@ -22,7 +25,19 @@ const config = {
       {
         test: /\.tsx?$/i,
         exclude: [/node_modules/],
-        use: "ts-loader",
+        use: [
+          {
+            loader: "babel-loader",
+            options: babelOptions,
+          },
+          {
+            loader: "ts-loader",
+          },
+        ],
+      },
+      {
+        test: /\.s[ca]ss$/i,
+        use: ["style-loader", "css-loader", "sass-loader"],
       },
     ],
   },
