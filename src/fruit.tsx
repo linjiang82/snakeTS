@@ -1,15 +1,26 @@
-import { randomInt } from "crypto";
-import React, { useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
+import { IContext, gameCtrlCxt } from "./context";
 
 interface IFruit {
   location: [number, number];
 }
-const Fruit = () => {
-  let x = Math.floor(Math.random() * 10) * 30;
-  let y = Math.floor(Math.random() * 10) * 30;
-  const [state, setState] = useState({
-    location: [x, y],
+interface IProps {}
+
+const Fruit = (props: IProps) => {
+  const { eaten, setEaten } = useContext(gameCtrlCxt) as IContext;
+  const [state, setState] = useState<IFruit>(() => {
+    let x = Math.floor(Math.random() * 10) * 30;
+    let y = Math.floor(Math.random() * 10) * 30;
+    return { location: [x, y] };
   });
+  useEffect(() => {
+    if (eaten) {
+      let x = Math.floor(Math.random() * 10) * 30;
+      let y = Math.floor(Math.random() * 10) * 30;
+      setState({ location: [x, y] });
+      setEaten(false);
+    }
+  }, [eaten]);
 
   return (
     <div

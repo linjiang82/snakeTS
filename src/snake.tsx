@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
+import { gameCtrlCxt, IContext } from "./context";
 
 enum IDirection {
   "L",
@@ -12,7 +13,12 @@ interface ISnake {
   direction: IDirection;
   location: [number, number];
 }
-const Snake = (props: { keychange: "s" | "d" | "a" | "w" | "" }) => {
+interface IProps {
+  keychange: "s" | "d" | "a" | "w" | "";
+}
+
+const Snake = (props: IProps) => {
+  const context = useContext(gameCtrlCxt) as IContext;
   const [length, setLength] = useState(3);
   const [speed, setSpeed] = useState(1);
   const [direction, setDirection] = useState(IDirection.R);
@@ -50,7 +56,6 @@ const Snake = (props: { keychange: "s" | "d" | "a" | "w" | "" }) => {
       ] as HTMLElement;
       let x = prevNode?.style.left || 0;
       let y = prevNode?.style.top || 0;
-      console.log(i);
       tempDivs.push(
         <div key={i} className="snake" style={{ left: x, top: y }}></div>
       );
@@ -63,6 +68,22 @@ const Snake = (props: { keychange: "s" | "d" | "a" | "w" | "" }) => {
       ></div>
     );
     setDivs(tempDivs);
+  };
+
+  const checkEaten = () => {
+    let fruit = document.getElementsByClassName("fruit")[0] as HTMLElement;
+    let snakes = document.getElementsByClassName("snake");
+    let snake = snakes[snakes.length - 1] as HTMLElement;
+    let fruitX = fruit?.style.left;
+    let fruitY = fruit?.style.top;
+    let snakeX = snake?.style.left;
+    let snakeY = snake?.style.top;
+    //if eaten, increase the length, score and speed
+    if (fruitX === snakeX && fruitY === snakeY) {
+      setLength((prev) => prev + 1);
+      setSpeed((prev) => prev + 0.4);
+      context.setEaten(true);
+    }
   };
 
   //change direction per the props passed from gameCtrl
@@ -99,6 +120,7 @@ const Snake = (props: { keychange: "s" | "d" | "a" | "w" | "" }) => {
   });
 
   useEffect(() => {
+    checkEaten();
     display();
   }, [location]);
   return <div>{divs}</div>;
