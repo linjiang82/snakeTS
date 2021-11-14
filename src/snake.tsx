@@ -52,15 +52,15 @@ const Snake = (props: IProps) => {
     let tempDivs: JSX.Element[] = [];
     for (let i = length - 1; i > 0; i--) {
       let prevNode = document.getElementsByClassName("snake")[
-        length - i
+        i - 1
       ] as HTMLElement;
       let x = prevNode?.style.left || 0;
       let y = prevNode?.style.top || 0;
-      tempDivs.push(
+      tempDivs.unshift(
         <div key={i} className="snake" style={{ left: x, top: y }}></div>
       );
     }
-    tempDivs.push(
+    tempDivs.unshift(
       <div
         key={0}
         className="snake"
@@ -73,7 +73,7 @@ const Snake = (props: IProps) => {
   const checkEaten = () => {
     let fruit = document.getElementsByClassName("fruit")[0] as HTMLElement;
     let snakes = document.getElementsByClassName("snake");
-    let snake = snakes[snakes.length - 1] as HTMLElement;
+    let snake = snakes[0] as HTMLElement;
     let fruitX = fruit?.style.left;
     let fruitY = fruit?.style.top;
     let snakeX = snake?.style.left;
@@ -81,7 +81,7 @@ const Snake = (props: IProps) => {
     //if eaten, increase the length, score and speed
     if (fruitX === snakeX && fruitY === snakeY) {
       setLength((prev) => prev + 1);
-      setSpeed((prev) => prev + 0.4);
+      setSpeed((prev) => prev + 0.3);
       context.setEaten(true);
     }
   };
@@ -111,6 +111,11 @@ const Snake = (props: IProps) => {
       }
     }
   }, [props.keychange]);
+
+  //the below effect to reduce the delay between key pressed and the snake movement.
+  useEffect(() => {
+    headPos();
+  }, [direction]);
 
   useEffect(() => {
     let id = setTimeout(headPos, 300 / speed);

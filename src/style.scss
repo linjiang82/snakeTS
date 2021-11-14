@@ -20,12 +20,14 @@ body {
           width:10px;
           height:10px;
           background-color:#000;
+          z-index:2;
         }
         .fruit{
           position: absolute;
           width:10px;
           height:10px;
           background-color:#888;
+          z-index:1;
 
         }
       }
