@@ -19,29 +19,52 @@ interface IProps {
 
 const Snake = (props: IProps) => {
   const context = useContext(gameCtrlCxt) as IContext;
-  const [length, setLength] = useState(3);
+  const [length, setLength] = useState(1);
   const [speed, setSpeed] = useState(1);
   const [direction, setDirection] = useState(IDirection.R);
   const [location, setLocation] = useState([0, 0]);
   const [divs, setDivs] = useState<JSX.Element[]>();
 
+  //start the game with 3 long snake, not setting the initial
+  //length to 3 bcs that will cause gameover right away
+  useEffect(() => {
+    if (length < 3) {
+      setLength((prev) => prev + 1);
+    }
+  });
+
+  let fruit = document.getElementsByClassName("fruit")[0] as HTMLElement;
+  let snakes = document.getElementsByClassName("snake");
+  let snake = snakes[0] as HTMLElement;
+  let fruitX = fruit?.style.left;
+  let fruitY = fruit?.style.top;
+  let snakeX = snake?.style.left;
+  let snakeY = snake?.style.top;
   //update the location of snake head
   const headPos = () => {
     switch (direction) {
       case IDirection.D: {
-        setLocation([location[0], location[1] + 10]);
+        if (location[1] + 10 >= 300) {
+          setLocation([location[0], 0]);
+        } else setLocation([location[0], location[1] + 10]);
         break;
       }
       case IDirection.U: {
-        setLocation([location[0], location[1] - 10]);
+        if (location[1] - 10 < 0) {
+          setLocation([location[0], 290]);
+        } else setLocation([location[0], location[1] - 10]);
         break;
       }
       case IDirection.R: {
-        setLocation([location[0] + 10, location[1]]);
+        if (location[0] + 10 >= 300) {
+          setLocation([0, location[1]]);
+        } else setLocation([location[0] + 10, location[1]]);
         break;
       }
       case IDirection.L: {
-        setLocation([location[0] - 10, location[1]]);
+        if (location[0] - 10 < 0) {
+          setLocation([290, location[1]]);
+        } else setLocation([location[0] - 10, location[1]]);
         break;
       }
     }
@@ -64,28 +87,41 @@ const Snake = (props: IProps) => {
       <div
         key={0}
         className="snake"
-        style={{ left: location[0], top: location[1] }}
+        style={{ backgroundColor: "red", left: location[0], top: location[1] }}
       ></div>
     );
     setDivs(tempDivs);
   };
 
   const checkEaten = () => {
-    let fruit = document.getElementsByClassName("fruit")[0] as HTMLElement;
-    let snakes = document.getElementsByClassName("snake");
-    let snake = snakes[0] as HTMLElement;
-    let fruitX = fruit?.style.left;
-    let fruitY = fruit?.style.top;
-    let snakeX = snake?.style.left;
-    let snakeY = snake?.style.top;
     //if eaten, increase the length, score and speed
-    if (fruitX === snakeX && fruitY === snakeY) {
+    if (
+      fruitX != undefined &&
+      snakeX != undefined &&
+      fruitX === snakeX &&
+      fruitY === snakeY
+    ) {
       setLength((prev) => prev + 1);
       setSpeed((prev) => prev + 0.3);
       context.setEaten(true);
     }
   };
 
+  //check gameover
+  const gameOver = () => {
+    const snakes = document.getElementsByClassName(
+      "snake"
+    ) as HTMLCollectionOf<HTMLElement>;
+    for (let i = length - 1; i > 0; i--) {
+      if (
+        snakes[i]?.style.left == snakes[0]?.style.left &&
+        snakes[i]?.style.top == snakes[0]?.style.top
+      ) {
+        context.setGameOver(true);
+        break;
+      }
+    }
+  };
   //change direction per the props passed from gameCtrl
   useEffect(() => {
     switch (props.keychange) {
@@ -125,8 +161,9 @@ const Snake = (props: IProps) => {
   });
 
   useEffect(() => {
-    checkEaten();
     display();
+    checkEaten();
+    gameOver();
   }, [location]);
   return <div>{divs}</div>;
 };
