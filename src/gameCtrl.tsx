@@ -33,7 +33,7 @@ const GameCtrl = () => {
     return () => {
       document.removeEventListener("keydown", listener);
     };
-  }, [state]);
+  });
   return (
     <gameCtrlCxt.Provider value={{ eaten, setEaten, setGameOver }}>
       <div className="gameFrame">
